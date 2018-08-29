@@ -6,14 +6,14 @@ const Swagger2Object = require("swagger2-to-object");
 
 const buildPostmanEnvironment = require("./buildPostmanEnvironment.js")
 
-const ignoredVariables = ["scheme", "host", "port"];
+const ignoredVariables = ["scheme", "host"];
 
 /* postman collection post-processing */
 function populateRequestJsonIfDefined (postmanRequest, swaggerSpec, swaggerRefsLookup, options) {
     var url = postmanRequest.url;
     var basePath = swaggerSpec.basePath;
 
-    var relativePath = url.replace(`{{scheme}}://{{host}}:{{port}}${basePath}`, "")
+    var relativePath = url.replace(`{{scheme}}://{{host}}:${basePath}`, "")
     var swaggerPath = ((relativePath.replace(/\/:([a-zA-Z0-9]+)/, "/{$1}")).split("?"))[0]
 
     var swaggerPathRoot = swaggerSpec.paths[swaggerPath];
@@ -50,7 +50,7 @@ function processPostmanCollection (postmanCollection, swaggerSpec, options) {
         }
     
         request.url = request.url.replace(/[hH][tT][tT][pP][sS]{0,1}:\/\//,  "{{scheme}}://");
-        request.url = request.url.replace(/:\/\/[^/]*/,  "://{{host}}:{{port}}");
+        request.url = request.url.replace(/:\/\/[^/]*/,  "://{{host}}");
 
         populateRequestJsonIfDefined(request, swaggerSpec, swaggerRefsLookup, options);
 
